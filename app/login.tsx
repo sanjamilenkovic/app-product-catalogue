@@ -1,11 +1,14 @@
-import WideButton from "@/components/buttons/WideButton";
+import { login } from "@/api/auth/login";
+import BaseButton from "@/components/buttons/BaseButton";
 import { Header } from "@/components/Header";
 import LabeledInput from "@/components/inputs/LabeledInput";
+import { BaseText } from "@/components/text/BaseText";
 import { colors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen () {
@@ -13,8 +16,26 @@ export default function LoginScreen () {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 
-	const onLoginPressed = () => {
+	const loginMutation = useMutation({
+		mutationKey: ['login'],
+		mutationFn: login
+	});
 
+	const onLoginPressed = async () => {
+
+		console.log("Login pressed", email, password);
+
+		await loginMutation.mutateAsync({
+			email: email,
+			password: password,
+		}, {
+			onSuccess: (data) => {
+				console.log("Login successful", data);
+			},
+			onError: (error) => {
+				console.log("Login failed", error);
+			}
+		})
 	}
 
 	const onGoogleLoginPressed = () => {
@@ -33,7 +54,7 @@ export default function LoginScreen () {
 				<Header onBackPressed={onBackPressed} />
 
 				<View style={styles.titleContainer}>
-					<Text style={styles.title}>Login</Text>
+					<BaseText style={styles.title}>Login</BaseText>
 				</View>
 
 
@@ -54,13 +75,14 @@ export default function LoginScreen () {
 						isSecure={true}
 						icon={<Icons.Lock />} />
 
-					<WideButton
+					<BaseButton
 						label="Login"
 						onPress={onLoginPressed} />
 
-					<WideButton
+					<BaseButton
 						label="Continue with Google"
 						onPress={onGoogleLoginPressed}
+						icon={<Icons.Google />}
 						style={{ backgroundColor: colors.white }} />
 
 				</View>

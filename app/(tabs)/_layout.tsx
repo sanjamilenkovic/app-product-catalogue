@@ -4,7 +4,7 @@ import { Redirect, Tabs } from "expo-router";
 
 export default function HomeTabsLayout () {
 
-	const isLoggedIn = false;
+	const isLoggedIn = true;
 
 	if (!isLoggedIn) {
 		return <Redirect href={"/login"} />

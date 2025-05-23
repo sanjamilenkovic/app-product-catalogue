@@ -1,19 +1,23 @@
 import { colors } from "@/theme/colors";
-import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { fontSizes } from "@/utils/dimensions";
+import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { BaseText } from "../text/BaseText";
 
-interface WideButtonProps {
+interface BaseButtonProps {
 	label: string;
 	onPress: () => void;
 	disabled?: boolean;
 	style?: StyleProp<ViewStyle>;
+	icon?: React.ReactNode;
 }
 
-function WideButton ({
+function BaseButton ({
 	label,
 	onPress,
 	disabled,
 	style,
-}: WideButtonProps) {
+	icon,
+}: BaseButtonProps) {
 
 	return (
 		<View style={styles.container}>
@@ -24,11 +28,12 @@ function WideButton ({
 					styles.button,
 					style,
 				]}>
-				<Text style={styles.buttonText}>
+				{icon}
+				<BaseText style={[styles.buttonText, icon ? { paddingLeft: 15 } : {}]}>
 					{label}
-				</Text>
+				</BaseText>
 			</Pressable>
-		</View>
+		</View >
 
 	);
 };
@@ -44,13 +49,15 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		backgroundColor: colors.primary,
 		alignItems: 'center',
+		flexDirection: 'row',
 	},
 	buttonText: {
-		fontWeight: '500'
+		fontWeight: '500',
+		fontSize: fontSizes.body2
 	},
 	buttonTextDark: {
 		textAlign: 'center',
 	},
 });
 
-export default WideButton
+export default BaseButton

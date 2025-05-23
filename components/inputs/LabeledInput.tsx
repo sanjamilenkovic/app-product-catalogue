@@ -1,7 +1,8 @@
 import { colors, textColors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
+import { BaseText } from "../text/BaseText";
 
 interface LabeledInputProps {
 	label: string;
@@ -18,19 +19,19 @@ function LabeledInput ({
 	placeholder,
 	isSecure,
 	value,
-	onChangeValue: onChangeText
+	onChangeValue
 }: LabeledInputProps) {
 
 	return (
 		<View style={styles.inputContainer}>
-			<Text style={styles.label}>{label}</Text>
+			<BaseText style={styles.label}>{label}</BaseText>
 			<View style={styles.inputSection}>
 				{icon}
 				<TextInput
 					secureTextEntry={isSecure}
 					style={styles.input}
 					value={value}
-					onChangeText={onChangeText}
+					onChangeText={onChangeValue}
 					placeholderTextColor={textColors.secondary}
 					placeholder={placeholder}
 					underlineColorAndroid="transparent"
@@ -65,6 +66,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		marginStart: 12,
 		color: textColors.primary,
+		fontSize: fontSizes.body1,
+		fontFamily: 'Lexend'
 	},
 });
 
