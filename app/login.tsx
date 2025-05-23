@@ -1,41 +1,46 @@
-import { login } from "@/api/auth/login";
+import { useLogin } from "@/api/auth/useLogin";
 import BaseButton from "@/components/buttons/BaseButton";
 import { Header } from "@/components/Header";
-import LabeledInput from "@/components/inputs/LabeledInput";
+import BaseInput from "@/components/inputs/BaseInput";
+import SecureInput from "@/components/inputs/SecureInput";
 import { BaseText } from "@/components/text/BaseText";
+import { useLocalStore } from "@/store/localStore";
 import { colors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
-import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen () {
 
-	const [email, setEmail] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
+	const router = useRouter()
+	const { setToken } = useLocalStore()
 
-	const loginMutation = useMutation({
-		mutationKey: ['login'],
-		mutationFn: login
-	});
+	//username: emilys
+	//password: emilyspass
+	const [email, setEmail] = useState<string>("emilys");
+	const [password, setPassword] = useState<string>("emilyspass");
+
+	const { mutateAsync, isPending } = useLogin()
 
 	const onLoginPressed = async () => {
 
-		console.log("Login pressed", email, password);
-
-		await loginMutation.mutateAsync({
-			email: email,
-			password: password,
-		}, {
-			onSuccess: (data) => {
-				console.log("Login successful", data);
-			},
-			onError: (error) => {
-				console.log("Login failed", error);
+		mutateAsync({
+			username: email,
+			password: password
+		},
+			{
+				onSuccess: (data) => {
+					setToken(data.accessToken)
+					router.navigate('/')
+				},
+				onError: (error) => {
+					console.log("Login failed", error);
+				}
 			}
-		})
+		)
 	}
 
 	const onGoogleLoginPressed = () => {
@@ -60,23 +65,24 @@ export default function LoginScreen () {
 
 				<View style={styles.inputsContainer}>
 
-					<LabeledInput
+					<BaseInput
 						label="Email"
 						value={email}
 						onChangeValue={setEmail}
 						placeholder="john@email.com"
 						icon={<Icons.Email />} />
 
-					<LabeledInput
+					<SecureInput
 						label="Password"
 						placeholder="********"
 						value={password}
 						onChangeValue={setPassword}
-						isSecure={true}
 						icon={<Icons.Lock />} />
+
 
 					<BaseButton
 						label="Login"
+						isLoading={isPending}
 						onPress={onLoginPressed} />
 
 					<BaseButton

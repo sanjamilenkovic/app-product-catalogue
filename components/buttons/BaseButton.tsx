@@ -1,6 +1,6 @@
 import { colors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
-import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { ActivityIndicator, Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { BaseText } from "../text/BaseText";
 
 interface BaseButtonProps {
@@ -9,6 +9,7 @@ interface BaseButtonProps {
 	disabled?: boolean;
 	style?: StyleProp<ViewStyle>;
 	icon?: React.ReactNode;
+	isLoading?: boolean;
 }
 
 function BaseButton ({
@@ -17,6 +18,7 @@ function BaseButton ({
 	disabled,
 	style,
 	icon,
+	isLoading
 }: BaseButtonProps) {
 
 	return (
@@ -29,9 +31,13 @@ function BaseButton ({
 					style,
 				]}>
 				{icon}
-				<BaseText style={[styles.buttonText, icon ? { paddingLeft: 15 } : {}]}>
-					{label}
-				</BaseText>
+				{
+					isLoading ?
+						<ActivityIndicator /> : <BaseText style={[styles.buttonText, icon ? { paddingLeft: 15 } : {}]}>
+							{label}
+						</BaseText>
+				}
+
 			</Pressable>
 		</View >
 

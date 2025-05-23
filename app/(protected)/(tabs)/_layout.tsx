@@ -1,12 +1,13 @@
+import { useLocalStore } from "@/store/localStore";
 import { colors } from "@/theme/colors";
 import Icons from "@/utils/icons";
 import { Redirect, Tabs } from "expo-router";
 
 export default function HomeTabsLayout () {
 
-	const isLoggedIn = true;
+	const { token } = useLocalStore()
 
-	if (!isLoggedIn) {
+	if (!token) {
 		return <Redirect href={"/login"} />
 	}
 

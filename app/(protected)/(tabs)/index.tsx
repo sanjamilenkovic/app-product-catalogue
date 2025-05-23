@@ -1,5 +1,5 @@
 import { useProducts } from "@/api/products/useGetAllProducts";
-import LabeledInput from "@/components/inputs/LabeledInput";
+import BaseInput from "@/components/inputs/BaseInput";
 import ProductsSection from "@/components/products/ProductsSection";
 import { BaseText } from "@/components/text/BaseText";
 import { Product } from "@/data/Product";
@@ -57,7 +57,7 @@ export default function OverviewScreen () {
 				<Icons.Notification />
 			</View>
 
-			<LabeledInput icon={<Icons.Search />} label="" placeholder="Search for products" />
+			<BaseInput icon={<Icons.Search />} label="" placeholder="Search for products" />
 
 			<ProductsSection
 				data={newProducts}

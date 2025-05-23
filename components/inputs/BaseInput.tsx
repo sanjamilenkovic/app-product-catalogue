@@ -1,51 +1,62 @@
 import { colors, textColors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
-import Icons from "@/utils/icons";
 import { StyleSheet, TextInput, View } from "react-native";
 import { BaseText } from "../text/BaseText";
 
 interface LabeledInputProps {
-	label: string;
+	label?: string;
 	placeholder: string;
 	value?: string;
 	onChangeValue?: (text: string) => void;
 	icon?: React.ReactNode;
 	isSecure?: boolean;
+	trailingIcon?: React.ReactNode;
+	externalTrailingIcon?: React.ReactNode
 }
 
-function LabeledInput ({
+function BaseInput ({
 	icon,
 	label,
 	placeholder,
 	isSecure,
 	value,
-	onChangeValue
+	onChangeValue,
+	trailingIcon,
+	externalTrailingIcon
 }: LabeledInputProps) {
 
 	return (
-		<View style={styles.inputContainer}>
+		<View style={styles.labeledInputContainer}>
 			<BaseText style={styles.label}>{label}</BaseText>
-			<View style={styles.inputSection}>
-				{icon}
-				<TextInput
-					secureTextEntry={isSecure}
-					style={styles.input}
-					value={value}
-					onChangeText={onChangeValue}
-					placeholderTextColor={textColors.secondary}
-					placeholder={placeholder}
-					underlineColorAndroid="transparent"
-				/>
-				{isSecure && <Icons.Eye />}
+			<View style={styles.inputContainer}>
+				<View style={styles.inputSection}>
+					{icon}
+					<TextInput
+						secureTextEntry={isSecure}
+						style={styles.input}
+						value={value}
+						onChangeText={onChangeValue}
+						placeholderTextColor={textColors.secondary}
+						placeholder={placeholder}
+						underlineColorAndroid="transparent"
+					/>
+					{trailingIcon}
+				</View>
+				{externalTrailingIcon}
 			</View>
+
 		</View>
 
 	);
 };
 
 const styles = StyleSheet.create({
-	inputContainer: {
+	labeledInputContainer: {
 		paddingHorizontal: 16,
+	},
+	inputContainer: {
+		flexDirection: 'row',
+		alignItems: 'center'
 	},
 	label: {
 		fontWeight: '500',
@@ -54,6 +65,7 @@ const styles = StyleSheet.create({
 		fontSize: fontSizes.body1,
 	},
 	inputSection: {
+		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -71,4 +83,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default LabeledInput
+export default BaseInput

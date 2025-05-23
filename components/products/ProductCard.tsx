@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
 	cardContainer: {
 		backgroundColor: backgroundColors.cellPrimary,
 		paddingTop: 16,
-		marginEnd: 16,
 		marginTop: 16,
 		borderRadius: 15,
 		width: 324 //TODO: should be dynamic?

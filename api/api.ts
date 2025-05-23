@@ -7,7 +7,7 @@ export enum HttpMethod {
 }
 
 interface ApiCallProps {
-	route: string;
+	path: string;
 	method: string;
 	body?: any;
 }
@@ -17,11 +17,16 @@ interface ApiCallProps {
 const API_URL = 'https://dummyjson.com/';
 
 
-export const apiCall = async ({ route, method, body }: ApiCallProps) => {
-	return fetch(`${API_URL}${route}`, {
+export async function apiCall<T> ({ path, method, body }: ApiCallProps): Promise<T> {
+	const result = await fetch(`${API_URL}${path}`, {
 		method: method,
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(body),
-		credentials: 'include', // Include cookies (e.g., accessToken) in the request
-	}).then((res) => res.json())
+	})
+
+	if (!result.ok) {
+		throw new Error();
+	}
+
+	return result.json() as Promise<T>
 }

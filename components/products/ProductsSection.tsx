@@ -24,10 +24,11 @@ function ProductsSection ({ headline, onButtonPress, data }: ProductsSectionProp
 				data={data}
 				renderItem={({ item }: { item: Product }) => {
 					return (
-						<ProductCard product={item} />
+						<View style={{ width: 324, marginEnd: 16 }}>
+							<ProductCard product={item} />
+						</View>
 					)
 				}}
-				removeClippedSubviews={true}
 				horizontal
 				showsHorizontalScrollIndicator={false}
 				keyExtractor={(item) => item.id.toString()} />
