@@ -7,4 +7,6 @@ export interface Product {
 	brand: string;
 	price: number;
 	stock: number;
+
+	isFavorite: boolean; //custom added field
 }

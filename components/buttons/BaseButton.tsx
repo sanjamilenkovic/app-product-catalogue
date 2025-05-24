@@ -1,6 +1,5 @@
 import { colors } from "@/theme/colors";
-import { fontSizes } from "@/utils/dimensions";
-import { ActivityIndicator, Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { ActivityIndicator, Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { BaseText } from "../text/BaseText";
 
 interface BaseButtonProps {
@@ -10,6 +9,7 @@ interface BaseButtonProps {
 	style?: StyleProp<ViewStyle>;
 	icon?: React.ReactNode;
 	isLoading?: boolean;
+	white?: boolean;
 }
 
 function BaseButton ({
@@ -18,51 +18,41 @@ function BaseButton ({
 	disabled,
 	style,
 	icon,
-	isLoading
+	isLoading,
+	white
 }: BaseButtonProps) {
-
 	return (
-		<View style={styles.container}>
-			<Pressable
-				onPress={onPress}
-				disabled={disabled}
-				style={[
-					styles.button,
-					style,
-				]}>
-				{icon}
-				{
-					isLoading ?
-						<ActivityIndicator /> : <BaseText style={[styles.buttonText, icon ? { paddingLeft: 15 } : {}]}>
-							{label}
-						</BaseText>
-				}
-
-			</Pressable>
-		</View >
-
+		<Pressable
+			onPress={onPress}
+			disabled={disabled}
+			style={[
+				styles.button,
+				style,
+				white ? { backgroundColor: colors.white } : { backgroundColor: colors.primary }
+			]}>
+			{icon}
+			{
+				isLoading ?
+					<ActivityIndicator /> :
+					<BaseText style={[styles.buttonText, icon ? { paddingLeft: 15 } : {}]}>
+						{label}
+					</BaseText>
+			}
+		</Pressable>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: {
-		paddingHorizontal: 16,
-	},
 	button: {
 		borderRadius: 15,
 		paddingVertical: 4,
 		height: 48,
 		justifyContent: 'center',
-		backgroundColor: colors.primary,
 		alignItems: 'center',
 		flexDirection: 'row',
 	},
 	buttonText: {
 		fontWeight: '500',
-		fontSize: fontSizes.body2
-	},
-	buttonTextDark: {
-		textAlign: 'center',
 	},
 });
 

@@ -1,6 +1,6 @@
-import { colors, textColors } from "@/theme/colors";
+import { backgroundColors, colors, textColors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleProp, StyleSheet, TextInput, View, ViewStyle } from "react-native";
 import { BaseText } from "../text/BaseText";
 
 interface LabeledInputProps {
@@ -11,7 +11,11 @@ interface LabeledInputProps {
 	icon?: React.ReactNode;
 	isSecure?: boolean;
 	trailingIcon?: React.ReactNode;
-	externalTrailingIcon?: React.ReactNode
+	externalTrailingIcon?: React.ReactNode;
+	isMultiline?: boolean;
+	isMandatory?: boolean;
+	isEditable?: boolean;
+	style?: StyleProp<ViewStyle>;
 }
 
 function BaseInput ({
@@ -22,19 +26,29 @@ function BaseInput ({
 	value,
 	onChangeValue,
 	trailingIcon,
-	externalTrailingIcon
+	externalTrailingIcon,
+	isMultiline,
+	isMandatory,
+	isEditable = true,
+	style
 }: LabeledInputProps) {
 
 	return (
-		<View style={styles.labeledInputContainer}>
-			<BaseText style={styles.label}>{label}</BaseText>
-			<View style={styles.inputContainer}>
-				<View style={styles.inputSection}>
+		<View>
+			<View style={{ flexDirection: 'row' }}>
+				{label && <BaseText style={styles.label}>{label}</BaseText>}
+				{isMandatory && <BaseText style={[styles.label, { color: colors.error }]}>*</BaseText>}
+			</View>
+
+			<View style={[styles.inputContainer, style]}>
+				<View style={[styles.inputSection, !isEditable ? { backgroundColor: backgroundColors.doubleCellPrimary } : {}]}>
 					{icon}
 					<TextInput
 						secureTextEntry={isSecure}
 						style={styles.input}
+						editable={isEditable}
 						value={value}
+						multiline={isMultiline}
 						onChangeText={onChangeValue}
 						placeholderTextColor={textColors.secondary}
 						placeholder={placeholder}
@@ -46,17 +60,13 @@ function BaseInput ({
 			</View>
 
 		</View>
-
 	);
 };
 
 const styles = StyleSheet.create({
-	labeledInputContainer: {
-		paddingHorizontal: 16,
-	},
 	inputContainer: {
 		flexDirection: 'row',
-		alignItems: 'center'
+		alignItems: 'center',
 	},
 	label: {
 		fontWeight: '500',
@@ -79,8 +89,12 @@ const styles = StyleSheet.create({
 		marginStart: 12,
 		color: textColors.primary,
 		fontSize: fontSizes.body1,
-		fontFamily: 'Lexend'
+		fontFamily: 'Lexend',
+		flexWrap: 'wrap'
 	},
+	disabledInput: {
+		backgroundColor: backgroundColors.doubleCellPrimary
+	}
 });
 
 export default BaseInput

@@ -1,6 +1,6 @@
 import { fontSizes } from "@/utils/dimensions";
 import { StyleSheet, View } from "react-native";
-import { BaseText } from "../text/BaseText";
+import { BaseText } from "../../text/BaseText";
 
 interface CardSingleInfoProps {
 	label: string;

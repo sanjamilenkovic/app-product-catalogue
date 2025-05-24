@@ -11,6 +11,7 @@ interface ProductsStore {
 	addProductToFavorites: (product: Product) => void;
 }
 
+//todo: persist this store
 export const useLocalStore = create<AuthStore & ProductsStore>((set) => ({
 	token: null,
 	setToken: (token) => {
@@ -20,8 +21,23 @@ export const useLocalStore = create<AuthStore & ProductsStore>((set) => ({
 	},
 	favorites: [],
 	addProductToFavorites: (product: Product) => {
-		set((prevState) => ({
-			favorites: [...prevState.favorites, product]
-		}))
+		set((prevState) => {
+			const isFavorite = prevState.favorites.some((fav) => fav.id === product.id);
+
+			let updatedFavorites;
+			if (isFavorite) {
+				// Remove from favorites
+				const updatedProduct = { ...product, isFavorite: false }
+				updatedFavorites = prevState.favorites.filter((fav) => fav.id !== product.id);
+			} else {
+				// Add to favorites with isFavorite: true
+				const productWithFlag = { ...product, isFavorite: true };
+				updatedFavorites = [...prevState.favorites, productWithFlag];
+			}
+
+			return {
+				favorites: updatedFavorites
+			};
+		});
 	}
 })) 

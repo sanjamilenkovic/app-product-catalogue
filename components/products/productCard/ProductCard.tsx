@@ -2,22 +2,28 @@ import { Product } from "@/data/Product";
 import { backgroundColors, colors, textColors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
-import { StyleSheet, View } from "react-native";
-import { BaseText } from "../text/BaseText";
+import { Pressable, StyleSheet, View } from "react-native";
+import { BaseText } from "../../text/BaseText";
 import CardSingleInfo from "./CardSingleInfo";
 
 interface ProductCardProps {
 	product: Product
+	onFavoriteButtonPressed: () => void;
+	onProductPressed: (productID: string) => void;
 }
 
-function ProductCard ({ product }: ProductCardProps) {
+function ProductCard ({ product, onProductPressed, onFavoriteButtonPressed }: ProductCardProps) {
 	return (
-		<View style={styles.cardContainer}>
+		<Pressable style={styles.cardContainer} onPress={() => onProductPressed(product.id)}>
 			<View style={styles.contentContainer}>
-				<View style={styles.headlineContainer}>
-					<BaseText style={styles.title}>{product.title}</BaseText>
-					<Icons.Heart />
 
+				<View style={styles.headlineContainer}>
+					<View style={{ flex: 1 }}>
+						<BaseText variant="body1" numberOfLines={1}>{product.title}</BaseText>
+					</View>
+					<Pressable onPress={onFavoriteButtonPressed}>
+						{product.isFavorite ? <Icons.HeartFilled /> : <Icons.Heart />}
+					</Pressable>
 				</View>
 
 				<View style={styles.divider} />
@@ -42,7 +48,7 @@ function ProductCard ({ product }: ProductCardProps) {
 				</View>
 			</View>
 
-		</View>
+		</Pressable>
 	)
 }
 
@@ -52,12 +58,12 @@ const styles = StyleSheet.create({
 		paddingTop: 16,
 		marginTop: 16,
 		borderRadius: 15,
-		width: 324 //TODO: should be dynamic?
 	},
 	contentContainer: {
-		paddingHorizontal: 16,
+		marginHorizontal: 16,
 	},
 	headlineContainer: {
+		flex: 1,
 		flexDirection: "row",
 		justifyContent: 'space-between',
 		alignItems: 'center',
@@ -68,11 +74,6 @@ const styles = StyleSheet.create({
 		backgroundColor: backgroundColors.strokePrimary,
 		marginBottom: 12,
 	},
-	title: {
-		fontWeight: '500',
-		fontSize: fontSizes.body1,
-		color: textColors.primary
-	},
 	description: {
 		color: textColors.secondary,
 		marginBottom: 12,
@@ -81,7 +82,8 @@ const styles = StyleSheet.create({
 		backgroundColor: backgroundColors.cellSecondary,
 		paddingHorizontal: 16,
 		paddingVertical: 15,
-		borderRadius: 15,
+		borderBottomEndRadius: 15,
+		borderBottomStartRadius: 15,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 	},

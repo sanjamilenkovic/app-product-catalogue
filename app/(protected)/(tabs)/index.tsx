@@ -1,39 +1,32 @@
-import { useProducts } from "@/api/products/useGetAllProducts";
+import { CardInvite } from "@/components/card/CardInvite";
 import BaseInput from "@/components/inputs/BaseInput";
-import ProductsSection from "@/components/products/ProductsSection";
+import ProductsSection from "@/components/products/productCard/ProductsSection";
 import { BaseText } from "@/components/text/BaseText";
-import { Product } from "@/data/Product";
+import { useGetProducts } from "@/hooks/useGetProducts";
+import { useLocalStore } from "@/store/localStore";
 import { colors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
-import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function OverviewScreen () {
 
+	const router = useRouter()
 	const { top } = useSafeAreaInsets();
 
-	const { data, isLoading, error } = useProducts()
-	const [newProducts, setNewProducts] = useState<Product[]>([])
-	const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([])
+	const { productsData } = useGetProducts();
+	const { addProductToFavorites, favorites } = useLocalStore()
 
-	useEffect(() => {
-		if (data?.products) {
-			data.products.map((product) => {
-				setNewProducts((prev) => [...prev, {
-					brand: product.brand,
-					category: product.category,
-					description: product.description,
-					id: product.id.toString(),
-					price: product.price,
-					rating: product.rating,
-					stock: product.stock,
-					title: product.title
-				}])
-			})
-		}
-	}, [data])
+	const onProductPressed = (productID: string) => {
+		router.push({
+			pathname: "/(protected)/product/[id]",
+			params: {
+				id: productID
+			}
+		})
+	}
 
 	const onAllProductsPressed = () => {
 
@@ -44,7 +37,7 @@ export default function OverviewScreen () {
 	}
 
 	return (
-		<ScrollView style={[styles.container, { paddingTop: top }]}>
+		<ScrollView style={[styles.container, { paddingTop: top }]} contentContainerStyle={{ paddingBottom: 20 }} showsVerticalScrollIndicator={false}>
 
 			<View style={styles.topSectionContainer}>
 				<View style={styles.creditsContainer}>
@@ -57,17 +50,36 @@ export default function OverviewScreen () {
 				<Icons.Notification />
 			</View>
 
-			<BaseInput icon={<Icons.Search />} label="" placeholder="Search for products" />
+			<BaseInput
+				style={styles.searchInput}
+				placeholder="Search for products"
+				icon={<Icons.Search />} />
 
-			<ProductsSection
-				data={newProducts}
-				headline="New products"
-				onButtonPress={onAllProductsPressed} />
+			<View style={styles.productsContainer}>
+				<ProductsSection
+					data={productsData}
+					headline="New products"
+					onProductPressed={onProductPressed}
+					onFavoriteButtonPressed={(product) => {
+						addProductToFavorites(product)
+					}}
+					onViewAllButtonPressed={onAllProductsPressed} />
 
-			<ProductsSection
-				data={favoriteProducts}
-				headline="Favorite products"
-				onButtonPress={onAllFavoritesPressed} />
+				{favorites.length > 0 &&
+					<ProductsSection
+						data={favorites}
+						headline="Favorite products"
+						onProductPressed={onProductPressed}
+						onFavoriteButtonPressed={(product) => addProductToFavorites(product)}
+						onViewAllButtonPressed={onAllFavoritesPressed} />}
+			</View>
+
+
+
+			<CardInvite
+				onInviteButtonPressed={() => {
+					//todo: open share popup
+				}} />
 
 		</ScrollView>
 	);
@@ -79,11 +91,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	topSectionContainer: {
-		//backgroundColor: "red",
 		flexDirection: "row",
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingTop: 24,
+		paddingVertical: 24,
 		paddingHorizontal: 16
 	},
 	creditsContainer: {
@@ -104,5 +115,12 @@ const styles = StyleSheet.create({
 		fontWeight: '400',
 		fontSize: fontSizes.body2,
 		paddingVertical: 13
+	},
+	searchInput: {
+		marginHorizontal: 16
+	},
+	productsContainer: {
+		marginVertical: 40,
+		gap: 40
 	}
 }) 

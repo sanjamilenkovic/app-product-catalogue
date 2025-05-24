@@ -1,11 +1,11 @@
 import { useLogin } from "@/api/auth/useLogin";
 import BaseButton from "@/components/buttons/BaseButton";
-import { Header } from "@/components/Header";
+import { BaseHeader } from "@/components/Header";
 import BaseInput from "@/components/inputs/BaseInput";
 import SecureInput from "@/components/inputs/SecureInput";
 import { BaseText } from "@/components/text/BaseText";
 import { useLocalStore } from "@/store/localStore";
-import { colors } from "@/theme/colors";
+import { backgroundColors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
 import { useRouter } from "expo-router";
@@ -56,7 +56,7 @@ export default function LoginScreen () {
 
 			<View style={styles.container}>
 
-				<Header onBackPressed={onBackPressed} />
+				<BaseHeader onBackPressed={onBackPressed} />
 
 				<View style={styles.titleContainer}>
 					<BaseText style={styles.title}>Login</BaseText>
@@ -79,7 +79,6 @@ export default function LoginScreen () {
 						onChangeValue={setPassword}
 						icon={<Icons.Lock />} />
 
-
 					<BaseButton
 						label="Login"
 						isLoading={isPending}
@@ -87,10 +86,10 @@ export default function LoginScreen () {
 
 					<BaseButton
 						label="Continue with Google"
+						white
 						onPress={onGoogleLoginPressed}
 						icon={<Icons.Google />}
-						style={{ backgroundColor: colors.white }} />
-
+					/>
 				</View>
 
 			</View>
@@ -102,16 +101,16 @@ export default function LoginScreen () {
 const styles = StyleSheet.create({
 	safeAreaContainer: {
 		flex: 1,
-		backgroundColor: colors.backgroundPrimary
+		backgroundColor: backgroundColors.primary
 	},
 	container: {
 		flex: 1,
 		paddingVertical: 24,
-		backgroundColor: colors.backgroundPrimary,
+		paddingHorizontal: 16,
+		backgroundColor: backgroundColors.primary,
 		gap: 16
 	},
 	titleContainer: {
-		paddingHorizontal: 16,
 		paddingTop: 24,
 		paddingBottom: 16,
 	},

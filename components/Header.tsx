@@ -1,20 +1,29 @@
 import Icons from '@/utils/icons';
 import React from 'react';
-import { ColorValue, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { BaseText } from './text/BaseText';
 
-export type HeaderProps = {
+export type BaseHeaderProps = {
+	headline?: string;
+	trailingIcon?: React.ReactNode;
+	onTrailingIconPressed?: () => void;
 	onBackPressed?: () => void;
-	arrowColor?: ColorValue;
 };
 
-export const Header = (props: HeaderProps) => {
+export const BaseHeader = ({ headline, onBackPressed, onTrailingIconPressed, trailingIcon }: BaseHeaderProps) => {
 	return (
 		<View style={styles.headerContainer}>
-			<View style={styles.buttonContainer}>
-				<Pressable onPress={props.onBackPressed}>
-					<Icons.Arrow />
-				</Pressable>
-			</View>
+
+			<Pressable onPress={onBackPressed}>
+				<Icons.Arrow />
+			</Pressable>
+
+			{headline && <BaseText variant='body1'>{headline}</BaseText>}
+
+			<Pressable onPress={onTrailingIconPressed}>
+				{trailingIcon}
+			</Pressable>
+
 		</View>
 	);
 };
@@ -22,8 +31,10 @@ export const Header = (props: HeaderProps) => {
 
 const styles = StyleSheet.create({
 	headerContainer: {
-		paddingHorizontal: 8,
+		paddingVertical: 16,
 		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
 	},
 	buttonContainer: {
 		padding: 8,

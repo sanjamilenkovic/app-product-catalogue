@@ -1,5 +1,5 @@
 import { useLocalStore } from "@/store/localStore";
-import { colors } from "@/theme/colors";
+import { backgroundColors, colors } from "@/theme/colors";
 import Icons from "@/utils/icons";
 import { Redirect, Tabs } from "expo-router";
 
@@ -16,7 +16,7 @@ export default function HomeTabsLayout () {
 			screenOptions={{
 				headerShown: false,
 				sceneStyle: {
-					backgroundColor: colors.backgroundPrimary
+					backgroundColor: backgroundColors.primary
 				},
 				tabBarActiveTintColor: colors.primary,
 				tabBarStyle: {
