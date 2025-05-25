@@ -1,6 +1,6 @@
 import { useLogin } from "@/api/auth/useLogin";
 import BaseButton from "@/components/buttons/BaseButton";
-import { BaseHeader } from "@/components/Header";
+import { BaseHeader } from "@/components/header/BaseHeader";
 import BaseInput from "@/components/inputs/BaseInput";
 import SecureInput from "@/components/inputs/SecureInput";
 import { BaseText } from "@/components/text/BaseText";

@@ -19,13 +19,7 @@ export interface Product {
 	warrantyInformation: string;
 	shippingInformation: string;
 	availabilityStatus: string;
-	reviews: {
-		rating: number;
-		comment: string;
-		date: string;
-		reviewerName: string;
-		reviewerEmail: string;
-	}[];
+	reviews: Review[];
 	returnPolicy: string;
 	minimumOrderQuantity: number;
 	meta: {
@@ -36,4 +30,12 @@ export interface Product {
 	};
 	images: string[];
 	thumbnail: string;
+}
+
+interface Review {
+	rating: number;
+	comment: string;
+	date: string;
+	reviewerName: string;
+	reviewerEmail: string;
 }

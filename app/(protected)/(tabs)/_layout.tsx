@@ -3,12 +3,34 @@ import { backgroundColors, colors } from "@/theme/colors";
 import Icons from "@/utils/icons";
 import { Redirect, Tabs } from "expo-router";
 
-export default function HomeTabsLayout () {
+const tabScreens = [
+	{
+		name: "index",
+		title: "Overview",
+		Icon: Icons.House,
+	},
+	{
+		name: "favourites",
+		title: "Favourites",
+		Icon: Icons.Heart,
+	},
+	{
+		name: "litings",
+		title: "Litings",
+		Icon: Icons.Briefcase,
+	},
+	{
+		name: "profile",
+		title: "Profile",
+		Icon: Icons.Profile,
+	},
+];
 
-	const { token } = useLocalStore()
+export default function HomeTabsLayout () {
+	const { token } = useLocalStore();
 
 	if (!token) {
-		return <Redirect href={"/login"} />
+		return <Redirect href="/login" />;
 	}
 
 	return (
@@ -16,42 +38,24 @@ export default function HomeTabsLayout () {
 			screenOptions={{
 				headerShown: false,
 				sceneStyle: {
-					backgroundColor: backgroundColors.primary
+					backgroundColor: backgroundColors.primary,
 				},
 				tabBarActiveTintColor: colors.primary,
 				tabBarStyle: {
-					backgroundColor: colors.background
-				}
-			}}>
-			<Tabs.Screen
-				name="index"
-				options={{
-					title: "Overview",
-					tabBarIcon: () => <Icons.Home width={24} height={24} />,
-				}
-				} />
-
-			<Tabs.Screen
-				name="favourites"
-				options={{
-					title: "Favourites",
-					tabBarIcon: () => <Icons.Heart width={24} height={24} />,
-				}} />
-
-			<Tabs.Screen
-				name="litings"
-				options={{
-					title: "Litings",
-					tabBarIcon: () => <Icons.Briefcase width={24} height={24} />,
-				}} />
-
-			<Tabs.Screen
-				name="profile"
-				options={{
-					title: "Profile",
-					tabBarIcon: () => <Icons.Profile width={24} height={24} />,
-				}} />
-
+					backgroundColor: colors.background,
+				},
+			}}
+		>
+			{tabScreens.map(({ name, title, Icon }) => (
+				<Tabs.Screen
+					key={name}
+					name={name}
+					options={{
+						title,
+						tabBarIcon: ({ color }) => <Icon fill={color} />,
+					}}
+				/>
+			))}
 		</Tabs>
 	);
 }

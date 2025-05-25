@@ -2,13 +2,14 @@ import { CardInvite } from "@/components/card/CardInvite";
 import BaseInput from "@/components/inputs/BaseInput";
 import ProductsSection from "@/components/products/productCard/ProductsSection";
 import { BaseText } from "@/components/text/BaseText";
+import { Product } from "@/data/Product";
 import { useGetProducts } from "@/hooks/useGetProducts";
 import { useLocalStore } from "@/store/localStore";
 import { colors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
 import { useRouter } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, Share, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function OverviewScreen () {
@@ -19,11 +20,11 @@ export default function OverviewScreen () {
 	const { productsData } = useGetProducts();
 	const { addProductToFavorites, favorites } = useLocalStore()
 
-	const onProductPressed = (productID: string) => {
+	const onProductPressed = (product: Product) => {
 		router.push({
 			pathname: "/(protected)/product/[id]",
 			params: {
-				id: productID
+				id: product.id.toString()
 			}
 		})
 	}
@@ -34,6 +35,25 @@ export default function OverviewScreen () {
 
 	const onAllFavoritesPressed = () => {
 
+	}
+
+	const onInviteButtonPressed = async () => {
+		try {
+			const result = await Share.share({ message: 'Share options' });
+			if (result.action === Share.sharedAction) {
+				if (result.activityType) {
+					// shared with activity type of result.activityType
+					console.log(`shared with activityType ${result.activityType}`)
+				} else {
+					// shared
+					console.log(`shared`)
+				}
+			} else if (result.action === Share.dismissedAction) {
+				console.log(`share dismissed`)
+			}
+		} catch (error: any) {
+			Alert.alert(error.message);
+		}
 	}
 
 	return (
@@ -76,10 +96,7 @@ export default function OverviewScreen () {
 
 
 
-			<CardInvite
-				onInviteButtonPressed={() => {
-					//todo: open share popup
-				}} />
+			<CardInvite onInviteButtonPressed={onInviteButtonPressed} />
 
 		</ScrollView>
 	);

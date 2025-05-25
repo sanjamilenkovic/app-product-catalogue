@@ -1,5 +1,5 @@
 import BaseButton from "@/components/buttons/BaseButton";
-import { BaseHeader } from "@/components/Header";
+import { BaseHeader } from "@/components/header/BaseHeader";
 import BaseInput from "@/components/inputs/BaseInput";
 import { BaseText } from "@/components/text/BaseText";
 import { backgroundColors, textColors } from "@/theme/colors";
@@ -25,10 +25,7 @@ export default function EditProductScreen () {
 
 	const onEditButtonPressed = () => {
 		router.push({
-			pathname: '/(protected)/product/edit/[id]',
-			params: {
-				id: id.toString() //TODO: fix
-			}
+			pathname: '/(protected)/product/edit/success'
 		})
 	}
 

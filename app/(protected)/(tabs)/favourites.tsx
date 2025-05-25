@@ -1,22 +1,25 @@
 import { ProductsList } from "@/components/products/productCard/ProductsList";
 import { BaseText } from "@/components/text/BaseText";
+import { Product } from "@/data/Product";
 import { useLocalStore } from "@/store/localStore";
+import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function FavouritesScreen () {
 
+	const router = useRouter()
+
 	const { top } = useSafeAreaInsets()
-	const { favorites } = useLocalStore()
-	//const { productsData } = useGetProducts()
+	const { favorites, addProductToFavorites } = useLocalStore()
 
-	const onFavoriteButtonPressed = () => {
-
-	}
-
-
-	const onProductPressed = () => {
-
+	const onProductPressed = (product: Product) => {
+		router.push({
+			pathname: "/(protected)/product/[id]",
+			params: {
+				id: product.id
+			}
+		})
 	}
 
 	return (
@@ -26,8 +29,7 @@ export default function FavouritesScreen () {
 
 			<ProductsList
 				data={favorites}
-
-				onFavoriteButtonPressed={onFavoriteButtonPressed}
+				onFavoriteButtonPressed={addProductToFavorites}
 				onProductPressed={onProductPressed}
 			/>
 

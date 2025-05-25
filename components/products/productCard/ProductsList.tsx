@@ -5,7 +5,7 @@ import ProductCard from "./ProductCard"
 interface ProductsListProps {
 	data: Product[]
 	isHorizontal?: boolean
-	onProductPressed: (id: string) => void
+	onProductPressed: (product: Product) => void
 	onFavoriteButtonPressed: (product: Product) => void
 }
 
@@ -19,7 +19,7 @@ export function ProductsList ({ data, isHorizontal, onProductPressed, onFavorite
 						<ProductCard
 							product={item}
 							onFavoriteButtonPressed={() => onFavoriteButtonPressed(item)}
-							onProductPressed={() => onProductPressed(item.id)} />
+							onProductPressed={() => onProductPressed(item)} />
 					</View>
 				)
 			}}

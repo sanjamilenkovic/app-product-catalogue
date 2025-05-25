@@ -1,5 +1,7 @@
 import { Product } from "@/data/Product";
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { zustandMMKVStorage } from "./mmkv";
 
 interface AuthStore {
 	token: string | null;
@@ -11,33 +13,32 @@ interface ProductsStore {
 	addProductToFavorites: (product: Product) => void;
 }
 
-//todo: persist this store
-export const useLocalStore = create<AuthStore & ProductsStore>((set) => ({
-	token: null,
-	setToken: (token) => {
-		set({
-			token: token
-		})
-	},
-	favorites: [],
-	addProductToFavorites: (product: Product) => {
-		set((prevState) => {
-			const isFavorite = prevState.favorites.some((fav) => fav.id === product.id);
+export const useLocalStore = create<AuthStore & ProductsStore>()(
+	persist(
+		(set, get) => ({
+			token: null,
+			setToken: (token) => {
+				set({ token });
+			},
 
-			let updatedFavorites;
-			if (isFavorite) {
-				// Remove from favorites
-				const updatedProduct = { ...product, isFavorite: false }
-				updatedFavorites = prevState.favorites.filter((fav) => fav.id !== product.id);
-			} else {
-				// Add to favorites with isFavorite: true
-				const productWithFlag = { ...product, isFavorite: true };
-				updatedFavorites = [...prevState.favorites, productWithFlag];
-			}
+			favorites: [],
+			addProductToFavorites: (product: Product) => {
+				const existing = get().favorites;
+				const isFavorite = existing.some((fav) => fav.id === product.id);
 
-			return {
-				favorites: updatedFavorites
-			};
-		});
-	}
-})) 
+				let updatedFavorites;
+				if (isFavorite) {
+					updatedFavorites = existing.filter((fav) => fav.id !== product.id);
+				} else {
+					updatedFavorites = [...existing, { ...product, isFavorite: true }];
+				}
+
+				set({ favorites: updatedFavorites });
+			},
+		}),
+		{
+			name: 'product-catalogue-storage',
+			storage: createJSONStorage(() => zustandMMKVStorage)
+		}
+	)
+);

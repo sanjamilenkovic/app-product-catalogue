@@ -5,7 +5,9 @@ export const colors = {
 	white: "#FFFFFF",
 	black: "#000000",
 	blue: "#2555E7",
-	error: "#F0125C"
+	error: "#F0125C",
+	darkBlue: "#0E263E",
+	tertiary: '#8796A4'
 }
 
 export const textColors = {
