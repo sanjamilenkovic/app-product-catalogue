@@ -1,6 +1,7 @@
 import { Product } from "@/data/Product"
 import { fontSizes } from "@/utils/dimensions"
 import Icons from "@/utils/icons"
+import React from "react"
 import { StyleSheet, View } from "react-native"
 import IconButtonSmall from "../../buttons/IconButtonSmall"
 import { BaseText } from "../../text/BaseText"
@@ -17,7 +18,7 @@ interface ProductsSectionProps {
 function ProductsSection ({ headline, onProductPressed, onFavoriteButtonPressed, onViewAllButtonPressed, data }: ProductsSectionProps) {
 
 	return (
-		<View style={styles.productsContainer}>
+		<View>
 			<View style={styles.topSectionContainer}>
 				<BaseText style={styles.title}>{headline}</BaseText>
 				<IconButtonSmall label="View all" icon={<Icons.Arrow height={12} width={12} transform={[{ rotateY: '180deg' }]} />} onPress={onViewAllButtonPressed} />
@@ -35,10 +36,8 @@ function ProductsSection ({ headline, onProductPressed, onFavoriteButtonPressed,
 }
 
 const styles = StyleSheet.create({
-	productsContainer: {
-		paddingHorizontal: 16
-	},
 	topSectionContainer: {
+		paddingHorizontal: 16,
 		flexDirection: "row",
 		justifyContent: 'space-between',
 	},
@@ -47,4 +46,4 @@ const styles = StyleSheet.create({
 	}
 })
 
-export default ProductsSection
+export default React.memo(ProductsSection)

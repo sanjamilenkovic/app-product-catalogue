@@ -13,6 +13,7 @@ export function ProductsList ({ data, isHorizontal, onProductPressed, onFavorite
 	return (
 		<FlatList
 			data={data}
+			style={isHorizontal ? { paddingStart: 16 } : {}}
 			renderItem={({ item }: { item: Product }) => {
 				return (
 					<View style={isHorizontal ? { width: 324, marginEnd: 16 } : {}}>

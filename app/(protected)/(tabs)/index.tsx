@@ -9,7 +9,8 @@ import { colors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
 import { useRouter } from "expo-router";
-import { Alert, ScrollView, Share, StyleSheet, View } from "react-native";
+import { useCallback, useMemo, useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Share, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function OverviewScreen () {
@@ -17,39 +18,51 @@ export default function OverviewScreen () {
 	const router = useRouter()
 	const { top } = useSafeAreaInsets();
 
-	const { productsData } = useGetProducts();
-	const { addProductToFavorites, favorites } = useLocalStore()
+	const { productsData, isLoading } = useGetProducts();
 
-	const onProductPressed = (product: Product) => {
+	const favorites = useLocalStore(state => state.favorites);
+	const toggleFavoriteProduct = useLocalStore(state => state.toggleFavoriteProduct);
+
+	const [searchInput, setSearchInput] = useState<string>('');
+
+	const filteredProducts = useMemo(() => {
+		return productsData.filter(product =>
+			product.title.toLowerCase().includes(searchInput.toLowerCase())
+		);
+	}, [searchInput, productsData]);
+
+	const filteredFavorites = useMemo(() => {
+		return favorites.filter(product =>
+			product.title.toLowerCase().includes(searchInput.toLowerCase())
+		);
+	}, [searchInput, favorites]);
+
+	const onProductPressed = useCallback((product: Product) => {
 		router.push({
 			pathname: "/(protected)/product/[id]",
 			params: {
-				id: product.id.toString()
+				id: product.id.toString(),
 			}
 		})
-	}
+	}, [])
+
+	const onFavoriteToggle = useCallback((product: Product) => {
+		toggleFavoriteProduct(product);
+	}, [toggleFavoriteProduct]);
 
 	const onAllProductsPressed = () => {
-
 	}
 
 	const onAllFavoritesPressed = () => {
-
 	}
 
 	const onInviteButtonPressed = async () => {
 		try {
 			const result = await Share.share({ message: 'Share options' });
-			if (result.action === Share.sharedAction) {
-				if (result.activityType) {
-					// shared with activity type of result.activityType
-					console.log(`shared with activityType ${result.activityType}`)
-				} else {
-					// shared
-					console.log(`shared`)
-				}
-			} else if (result.action === Share.dismissedAction) {
-				console.log(`share dismissed`)
+			if (result.action === Share.dismissedAction) {
+				console.log(`share dismissed`);
+			} else {
+				console.log(`shared`);
 			}
 		} catch (error: any) {
 			Alert.alert(error.message);
@@ -57,7 +70,10 @@ export default function OverviewScreen () {
 	}
 
 	return (
-		<ScrollView style={[styles.container, { paddingTop: top }]} contentContainerStyle={{ paddingBottom: 20 }} showsVerticalScrollIndicator={false}>
+		<ScrollView
+			style={[styles.container, { paddingTop: top }]}
+			contentContainerStyle={styles.contentContainer}
+			showsVerticalScrollIndicator={false}>
 
 			<View style={styles.topSectionContainer}>
 				<View style={styles.creditsContainer}>
@@ -72,29 +88,30 @@ export default function OverviewScreen () {
 
 			<BaseInput
 				style={styles.searchInput}
+				value={searchInput}
+				onChangeValue={setSearchInput}
 				placeholder="Search for products"
 				icon={<Icons.Search />} />
 
 			<View style={styles.productsContainer}>
-				<ProductsSection
-					data={productsData}
-					headline="New products"
-					onProductPressed={onProductPressed}
-					onFavoriteButtonPressed={(product) => {
-						addProductToFavorites(product)
-					}}
-					onViewAllButtonPressed={onAllProductsPressed} />
+
+				{isLoading ?
+					<ActivityIndicator /> :
+					<ProductsSection
+						data={filteredProducts}
+						headline="New products"
+						onProductPressed={onProductPressed}
+						onFavoriteButtonPressed={onFavoriteToggle}
+						onViewAllButtonPressed={onAllProductsPressed} />}
 
 				{favorites.length > 0 &&
 					<ProductsSection
-						data={favorites}
+						data={filteredFavorites}
 						headline="Favorite products"
 						onProductPressed={onProductPressed}
-						onFavoriteButtonPressed={(product) => addProductToFavorites(product)}
+						onFavoriteButtonPressed={onFavoriteToggle}
 						onViewAllButtonPressed={onAllFavoritesPressed} />}
 			</View>
-
-
 
 			<CardInvite onInviteButtonPressed={onInviteButtonPressed} />
 
@@ -106,6 +123,9 @@ export default function OverviewScreen () {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+	},
+	contentContainer: {
+		paddingBottom: 20
 	},
 	topSectionContainer: {
 		flexDirection: "row",

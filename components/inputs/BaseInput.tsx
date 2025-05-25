@@ -1,6 +1,6 @@
 import { backgroundColors, colors, textColors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
-import { StyleProp, StyleSheet, TextInput, View, ViewStyle } from "react-native";
+import { Pressable, StyleProp, StyleSheet, TextInput, View, ViewStyle } from "react-native";
 import { BaseText } from "../text/BaseText";
 
 interface LabeledInputProps {
@@ -16,6 +16,7 @@ interface LabeledInputProps {
 	isMandatory?: boolean;
 	isEditable?: boolean;
 	style?: StyleProp<ViewStyle>;
+	onExternalTrailingIconPress?: () => void
 }
 
 function BaseInput ({
@@ -30,7 +31,8 @@ function BaseInput ({
 	isMultiline,
 	isMandatory,
 	isEditable = true,
-	style
+	style,
+	onExternalTrailingIconPress
 }: LabeledInputProps) {
 
 	return (
@@ -56,7 +58,9 @@ function BaseInput ({
 					/>
 					{trailingIcon}
 				</View>
-				{externalTrailingIcon}
+				<Pressable onPress={onExternalTrailingIconPress}>
+					{externalTrailingIcon}
+				</Pressable>
 			</View>
 
 		</View>

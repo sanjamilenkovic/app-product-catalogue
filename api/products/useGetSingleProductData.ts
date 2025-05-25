@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiCall, HttpMethod } from "../api";
-import { Product } from "./types/Product";
+import { ApiProduct } from "./types/ApiProduct";
 
 export const useGetSingleProductData = (id: string) =>
-	useQuery<Product>({
+	useQuery<ApiProduct>({
 		queryKey: ['products', id],
 		queryFn: () =>
 			apiCall({

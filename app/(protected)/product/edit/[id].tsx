@@ -1,3 +1,4 @@
+import { useGetSingleProductData } from "@/api/products/useGetSingleProductData";
 import BaseButton from "@/components/buttons/BaseButton";
 import { BaseHeader } from "@/components/header/BaseHeader";
 import BaseInput from "@/components/inputs/BaseInput";
@@ -5,39 +6,56 @@ import { BaseText } from "@/components/text/BaseText";
 import { backgroundColors, textColors } from "@/theme/colors";
 import Icons from "@/utils/icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditProductScreen () {
-
-	const [description, setDescription] = useState<string>()
-
-	const tags = ['Beauty', 'Mascara', 'Tag']
-
+	const router = useRouter()
 	const { id } = useLocalSearchParams()
 
-	const router = useRouter()
+	const { data: productData } = useGetSingleProductData(id.toString())
 
-	const onAddTagButtonPressed = () => {
+	const [title, setTitle] = useState<string>('');
+	const [description, setDescription] = useState<string>('')
+	const [tags, setTags] = useState<string[]>([])
 
-	}
+	useEffect(() => {
+		if (productData) {
+			setTitle(productData.title)
+			setDescription(productData.description)
+			setTags(productData.tags)
+		}
+	}, [productData])
 
-	const onEditButtonPressed = () => {
+	const onAddTagButtonPressed = useCallback(() => {
+		setTags((prevState) => [...prevState, ""]);
+	}, []);
+
+	const onRemoveTagButtonPressed = useCallback((index: number) => {
+		setTags((prevState) => prevState.filter((_, i) => i !== index));
+	}, []);
+
+	const updateTag = useCallback((index: number, newValue: string) => {
+		setTags((prev) => prev.map((tag, i) => (i === index ? newValue : tag)));
+	}, []);
+
+	const onEditButtonPressed = useCallback(() => {
 		router.push({
-			pathname: '/(protected)/product/edit/success'
-		})
-	}
+			pathname: "/(protected)/product/edit/success",
+		});
+	}, [router]);
 
-	const onBackButtonPressed = () => {
-		router.back()
-	}
+	const onBackButtonPressed = useCallback(() => {
+		router.back();
+	}, [router]);
+
+	const binIcon = useMemo(() => <Icons.Bin style={{ margin: 14 }} />, []);
 
 	return (
 		<SafeAreaView style={styles.container}>
 
 			<ScrollView showsVerticalScrollIndicator={false}>
-				{/** this can be extracted as separated header component */}
 				<BaseHeader
 					headline="Edit product"
 					onBackPressed={onBackButtonPressed}
@@ -53,21 +71,23 @@ export default function EditProductScreen () {
 					<BaseInput
 						label="Title"
 						placeholder="Product title"
-						value="Product title"
+						value={title}
+						onChangeValue={(text) => setTitle(text)}
 						isMandatory
 					/>
 
 					<BaseInput
 						label="Product description"
-						placeholder="Product title"
+						placeholder="Product description"
 						isMultiline={true}
 						value={description}
 						onChangeValue={setDescription}
 					/>
 
-					<BaseInput
-						isEditable={false}
-						placeholder="💡 ID of product" />
+					<View style={styles.disabledInput}>
+						<BaseText variant="body1" style={styles.disabledInputTitle}>💡 ID of product</BaseText>
+						<BaseText>{id}</BaseText>
+					</View>
 				</View>
 
 				<View style={styles.tagsContainer}>
@@ -75,15 +95,17 @@ export default function EditProductScreen () {
 						<BaseText variant="heading2">Tags</BaseText>
 					</View>
 
-					{tags.map((item) => {
+					{tags.map((item, index) => {
 						return (
 							<BaseInput
-								key={item}
-								label='Tag name'
+								key={index}
+								label="Tag name"
 								value={item}
-								placeholder="x"
+								onChangeValue={(text) => updateTag(index, text)}
+								placeholder="Enter tag name"
 								isMandatory
-								externalTrailingIcon={<Icons.Bin style={{ margin: 14 }} />} />
+								onExternalTrailingIconPress={() => onRemoveTagButtonPressed(index)}
+								externalTrailingIcon={binIcon} />
 						)
 					})}
 
@@ -97,22 +119,19 @@ export default function EditProductScreen () {
 
 					<BaseButton
 						label="Back"
-						style={{ flex: 1 }}
+						style={styles.footerButton}
 						white
 						onPress={onBackButtonPressed} />
 
 					<BaseButton
 						label="Edit"
-						style={{ flex: 1 }}
+						style={styles.footerButton}
 						onPress={
 							onEditButtonPressed
 						} />
 				</View>
 
-
 			</ScrollView>
-
-
 
 		</SafeAreaView>
 
@@ -143,6 +162,15 @@ const styles = StyleSheet.create({
 		gap: 16,
 		paddingVertical: 16
 	},
+	disabledInput: {
+		backgroundColor: backgroundColors.doubleCellPrimary,
+		borderRadius: 15,
+		padding: 16,
+		gap: 4,
+	},
+	disabledInputTitle: {
+		fontWeight: '600'
+	},
 	tagsContainer: {
 		gap: 16
 	},
@@ -152,5 +180,8 @@ const styles = StyleSheet.create({
 		marginTop: 58,
 		paddingVertical: 16,
 		flexDirection: 'row',
+	},
+	footerButton: {
+		flex: 1,
 	}
 })

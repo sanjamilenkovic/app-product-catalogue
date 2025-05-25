@@ -8,27 +8,34 @@ import { SingleDetailInfo } from "@/components/products/singleProductView/detail
 import SingleReview from "@/components/products/singleProductView/reviews/SingleReview";
 import { BaseText } from "@/components/text/BaseText";
 import ReadMoreText from "@/components/text/ReadMoreText";
+import { mapApiProductToProduct } from "@/data/mappers/mapApiProductToProduct";
 import { useLocalStore } from "@/store/localStore";
 import { backgroundColors, textColors } from "@/theme/colors";
+import { convertToFormattedDate } from "@/utils/dateTime/convertToFormattedDate";
 import Icons from "@/utils/icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProductScreen () {
 
+	const router = useRouter()
 	const { id } = useLocalSearchParams()
 
-	const { data: product } = useGetSingleProductData(id.toString())
+	const { data: currentProduct } = useGetSingleProductData(id.toString())
 
-	const { addProductToFavorites } = useLocalStore()
+	const { toggleFavoriteProduct, isFavorite } = useLocalStore()
 
-	const router = useRouter()
+	const isProductFavorite = useCallback(() => {
+		return isFavorite(id.toString())
+	}, [id])
 
 	const onEditButtonPressed = () => {
 		router.push({
 			pathname: '/(protected)/product/edit/[id]',
 			params: {
+				tags: currentProduct?.tags,
 				id: id.toString()
 			}
 		})
@@ -39,23 +46,21 @@ export default function ProductScreen () {
 	}
 
 	return (
-		product &&
+		currentProduct &&
 		<SafeAreaView style={styles.container}>
-
 			<ScrollView showsVerticalScrollIndicator={false}>
-
 				<BaseHeader
 					headline="Project"
 					onBackPressed={onBackButtonPressed}
 					onTrailingIconPressed={() => {
-						//TODO:
+						toggleFavoriteProduct(mapApiProductToProduct(currentProduct))
 					}}
-					trailingIcon={<Icons.Heart />} />
+					trailingIcon={isProductFavorite() ? <Icons.HeartFilled /> : <Icons.Heart />} />
 
 				<View style={styles.titleContainer}>
-					<BaseText variant="body1" style={styles.date}>Created at Jan 23, 2025</BaseText>
-					<BaseText variant="heading1">{product.title}</BaseText>
-					<ReadMoreText>{product.description}</ReadMoreText>
+					<BaseText variant="body1" style={styles.date}>{`Created at ${convertToFormattedDate(currentProduct.meta.createdAt)}`}</BaseText>
+					<BaseText variant="heading1">{currentProduct.title}</BaseText>
+					<ReadMoreText>{currentProduct.description}</ReadMoreText>
 				</View>
 
 				<View style={styles.additionalInfo}>
@@ -80,27 +85,40 @@ export default function ProductScreen () {
 					<CardWrapper style={{ marginTop: 20, marginBottom: 32 }}>
 						<SingleDetailInfo
 							title="Price"
-							value={`$${product.price}`}
+							value={`$${currentProduct.price}`}
 						/>
 						<SingleDetailInfo
 							title="Discount"
-							value={`%${product.discountPercentage}`}
+							value={`%${currentProduct.discountPercentage}`}
 						/>
 						<SingleDetailInfo
 							title="Rating"
-							value={product.rating}
+							value={currentProduct.rating}
 						/>
 						<SingleDetailInfo
 							title="Stock"
-							value={product.stock}
+							value={currentProduct.stock}
 						/>
 						<SingleDetailInfo
 							title="Weight"
-							value={product.weight}
+							value={currentProduct.weight}
 						/>
+
+						<View style={styles.detailInfoContainer}>
+							<BaseText style={styles.title}>Tags</BaseText>
+
+							<View style={styles.tagsWrapper}>
+								{currentProduct.tags.map((tag, index) => (
+									<View key={index} style={styles.tag}>
+										<BaseText>{tag}</BaseText>
+									</View>
+								))}
+							</View>
+						</View>
+
 						<SingleDetailInfo
 							title="Warranty"
-							value={product.warrantyInformation}
+							value={currentProduct.warrantyInformation}
 							enableBottomBorderRadius
 						/>
 					</CardWrapper>
@@ -109,10 +127,10 @@ export default function ProductScreen () {
 
 				<View>
 					<BaseText variant="heading2">Reviews</BaseText>
-					{product.reviews.map(review => {
+					{currentProduct.reviews.map((review, index) => {
 						return (
 							<SingleReview
-								key={`${review.reviewerName}-${review.date}-${review.rating}`}
+								key={index}
 								reviewer={review.reviewerName}
 								rating={review.rating}
 								comment={review.comment} />
@@ -123,7 +141,7 @@ export default function ProductScreen () {
 
 			</ScrollView>
 
-			<View style={{ paddingTop: 16 }}>
+			<View style={styles.buttonContainer}>
 				<BaseButton
 					label="Edit"
 					onPress={
@@ -159,5 +177,34 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		paddingBottom: 32,
-	}
-})
+	},
+	buttonContainer: {
+		paddingTop: 16
+	},
+	detailInfoContainer: {
+		padding: 16,
+		borderTopStartRadius: 15,
+		borderTopEndRadius: 15,
+		backgroundColor: backgroundColors.cellPrimary,
+		borderBottomWidth: 0.5,
+		borderBottomColor: backgroundColors.strokePrimary,
+	},
+	title: {
+		color: textColors.secondary,
+		marginBottom: 12,
+		fontWeight: '500',
+	},
+	tagsWrapper: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+	},
+	tag: {
+		backgroundColor: backgroundColors.cellSecondary,
+		borderRadius: 8,
+		width: '45%',
+		paddingHorizontal: 8,
+		paddingVertical: 4,
+		marginBottom: 8,
+		marginEnd: 12
+	},
+});

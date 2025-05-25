@@ -11,12 +11,10 @@ interface SingleDetailInfoProps {
 export function SingleDetailInfo ({ title, value, enableBottomBorderRadius }: SingleDetailInfoProps) {
 	return (
 		<View style={[styles.detailInfoContainer, enableBottomBorderRadius ? { borderBottomStartRadius: 15, borderBottomEndRadius: 15 } : {}]}>
-
 			<View style={styles.details}>
 				<BaseText style={styles.title}>{title}</BaseText>
 				<BaseText variant="body1" style={styles.value}>{value}</BaseText>
 			</View>
-
 		</View>
 	)
 }

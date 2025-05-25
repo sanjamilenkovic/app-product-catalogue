@@ -8,12 +8,13 @@ interface AuthStore {
 	setToken: (token: string) => void;
 }
 
-interface ProductsStore {
+interface FavoritesStore {
 	favorites: Product[]
-	addProductToFavorites: (product: Product) => void;
+	isFavorite: (id: string) => boolean;
+	toggleFavoriteProduct: (product: Product) => void;
 }
 
-export const useLocalStore = create<AuthStore & ProductsStore>()(
+export const useLocalStore = create<AuthStore & FavoritesStore>()(
 	persist(
 		(set, get) => ({
 			token: null,
@@ -22,11 +23,13 @@ export const useLocalStore = create<AuthStore & ProductsStore>()(
 			},
 
 			favorites: [],
-			addProductToFavorites: (product: Product) => {
+			isFavorite: (id) => get().favorites.some((fav) => fav.id === id),
+			toggleFavoriteProduct: (product: Product) => {
 				const existing = get().favorites;
 				const isFavorite = existing.some((fav) => fav.id === product.id);
 
 				let updatedFavorites;
+
 				if (isFavorite) {
 					updatedFavorites = existing.filter((fav) => fav.id !== product.id);
 				} else {

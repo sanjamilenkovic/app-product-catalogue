@@ -1,7 +1,7 @@
-import { Product } from "./Product";
+import { ApiProduct } from "./ApiProduct";
 
 export interface ProductsResponse {
-	products: Product[];
+	products: ApiProduct[];
 	total: number;
 	skip: number;
 	limit: number;

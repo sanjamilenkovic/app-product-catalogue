@@ -11,7 +11,7 @@ export default function FavouritesScreen () {
 	const router = useRouter()
 
 	const { top } = useSafeAreaInsets()
-	const { favorites, addProductToFavorites } = useLocalStore()
+	const { favorites, toggleFavoriteProduct } = useLocalStore()
 
 	const onProductPressed = (product: Product) => {
 		router.push({
@@ -29,7 +29,7 @@ export default function FavouritesScreen () {
 
 			<ProductsList
 				data={favorites}
-				onFavoriteButtonPressed={addProductToFavorites}
+				onFavoriteButtonPressed={toggleFavoriteProduct}
 				onProductPressed={onProductPressed}
 			/>
 
