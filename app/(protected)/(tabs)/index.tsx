@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Share, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 export default function OverviewScreen () {
 
@@ -50,10 +51,19 @@ export default function OverviewScreen () {
 		toggleFavoriteProduct(product);
 	}, [toggleFavoriteProduct]);
 
+	const showInfoToast = useCallback(() => {
+		Toast.show({
+			'type': 'info',
+			'text1': 'Not implemented'
+		})
+	}, [])
+
 	const onAllProductsPressed = () => {
+		showInfoToast()
 	}
 
 	const onAllFavoritesPressed = () => {
+		showInfoToast()
 	}
 
 	const onInviteButtonPressed = async () => {

@@ -1,6 +1,7 @@
-import { colors } from "@/theme/colors";
+import { colors, textColors } from "@/theme/colors";
+import { fontSizes } from "@/utils/dimensions";
 import React, { ReactNode, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { TextProps } from "react-native-svg";
 import { BaseText } from "./BaseText";
 
@@ -28,14 +29,16 @@ const ReadMoreText = ({ children }: ReadMoreTextProps) => {
 			>
 				{children}
 			</BaseText>
+
 			{shouldShowReadMore && !expanded && (
 				<Pressable onPress={toggleExpanded}>
-					<Text style={styles.link}>Read more</Text>
+					<BaseText style={styles.link}>Read more</BaseText>
 				</Pressable>
 			)}
+
 			{expanded && (
 				<Pressable onPress={toggleExpanded}>
-					<Text style={styles.link}>Show less</Text>
+					<BaseText style={styles.link}>Show less</BaseText>
 				</Pressable>
 			)}
 		</View>
@@ -47,9 +50,8 @@ const styles = StyleSheet.create({
 		marginBottom: 12,
 	},
 	text: {
-		fontSize: 16,
-		lineHeight: 22,
-		color: "#333",
+		fontSize: fontSizes.body1,
+		color: textColors.secondary
 	},
 	link: {
 		color: colors.blue,

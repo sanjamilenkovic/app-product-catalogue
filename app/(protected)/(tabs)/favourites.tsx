@@ -27,7 +27,7 @@ export default function FavouritesScreen () {
 	return (
 		<View style={[styles.container, { marginTop: top }]}>
 
-			<BaseText variant="heading1" style={styles.title}>Favorites</BaseText>
+			<BaseText variant="heading1" style={styles.title}>Favourites</BaseText>
 
 			<ProductsList
 				data={favorites}
@@ -43,8 +43,9 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingHorizontal: 16,
+		paddingTop: 24
 	},
 	title: {
-		paddingBottom: 16
+		paddingBottom: 16,
 	}
 })

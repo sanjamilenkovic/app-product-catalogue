@@ -29,7 +29,6 @@ export const useLocalStore = create<AuthStore & FavoritesStore>()(
 				const isFavorite = existing.some((fav) => fav.id === product.id);
 
 				let updatedFavorites;
-
 				if (isFavorite) {
 					updatedFavorites = existing.filter((fav) => fav.id !== product.id);
 				} else {

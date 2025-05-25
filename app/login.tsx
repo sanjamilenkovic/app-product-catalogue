@@ -14,6 +14,8 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+
 
 export default function LoginScreen () {
 
@@ -23,8 +25,8 @@ export default function LoginScreen () {
 
 	//username: emilys
 	//password: emilyspass
-	const [email, setEmail] = useState<string>("emilys");
-	const [password, setPassword] = useState<string>("emilyspass");
+	const [email, setEmail] = useState<string>('');
+	const [password, setPassword] = useState<string>('');
 
 	const { mutateAsync, isPending } = useLogin()
 
@@ -43,8 +45,11 @@ export default function LoginScreen () {
 				onSuccess: (data) => {
 					onLoginSuccess(data.accessToken)
 				},
-				onError: (error) => {
-					console.log("Login failed", error);
+				onError: () => {
+					Toast.show({
+						type: 'error',
+						text1: "Login failed"
+					})
 				}
 			}
 		)
@@ -119,7 +124,7 @@ export default function LoginScreen () {
 
 			</View>
 
-		</SafeAreaView>
+		</SafeAreaView >
 	);
 }
 
