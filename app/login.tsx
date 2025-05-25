@@ -8,6 +8,8 @@ import { useLocalStore } from "@/store/localStore";
 import { backgroundColors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
+import { getAuth, GoogleAuthProvider, signInWithCredential } from "@react-native-firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -15,8 +17,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen () {
 
+	const setToken = useLocalStore(state => state.setToken)
+
 	const router = useRouter()
-	const { setToken } = useLocalStore()
 
 	//username: emilys
 	//password: emilyspass
@@ -24,6 +27,11 @@ export default function LoginScreen () {
 	const [password, setPassword] = useState<string>("emilyspass");
 
 	const { mutateAsync, isPending } = useLogin()
+
+	const onLoginSuccess = (token: string) => {
+		setToken(token)
+		router.navigate('/')
+	}
 
 	const onLoginPressed = async () => {
 
@@ -33,8 +41,7 @@ export default function LoginScreen () {
 		},
 			{
 				onSuccess: (data) => {
-					setToken(data.accessToken)
-					router.navigate('/')
+					onLoginSuccess(data.accessToken)
 				},
 				onError: (error) => {
 					console.log("Login failed", error);
@@ -43,9 +50,27 @@ export default function LoginScreen () {
 		)
 	}
 
-	const onGoogleLoginPressed = () => {
+	const onGoogleLoginPressed = async () => {
+		try {
+			await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
-	}
+			const signInResult = await GoogleSignin.signIn();
+
+			const idToken = signInResult?.data?.idToken;
+
+			if (!idToken) {
+				return
+			}
+
+			onLoginSuccess(idToken)
+
+			const googleCredential = GoogleAuthProvider.credential(idToken);
+
+			return signInWithCredential(getAuth(), googleCredential);
+		} catch (error) {
+			console.error('Google sign-in error:', error);
+		}
+	};
 
 	const onBackPressed = () => {
 

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export const useGetProducts = () => {
 
 	const { data, isLoading } = useProducts();
-	const { favorites } = useLocalStore();
+	const favorites = useLocalStore(state => state.favorites);
 
 	const [productsData, setProductsData] = useState<Product[]>([]);
 

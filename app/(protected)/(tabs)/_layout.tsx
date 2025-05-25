@@ -27,7 +27,7 @@ const tabScreens = [
 ];
 
 export default function HomeTabsLayout () {
-	const { token } = useLocalStore();
+	const token = useLocalStore(state => state.token);
 
 	if (!token) {
 		return <Redirect href="/login" />;

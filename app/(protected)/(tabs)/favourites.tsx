@@ -11,7 +11,9 @@ export default function FavouritesScreen () {
 	const router = useRouter()
 
 	const { top } = useSafeAreaInsets()
-	const { favorites, toggleFavoriteProduct } = useLocalStore()
+
+	const favorites = useLocalStore(state => state.favorites)
+	const toggleFavoriteProduct = useLocalStore(state => state.toggleFavoriteProduct)
 
 	const onProductPressed = (product: Product) => {
 		router.push({

@@ -25,7 +25,8 @@ export default function ProductScreen () {
 
 	const { data: currentProduct } = useGetSingleProductData(id.toString())
 
-	const { toggleFavoriteProduct, isFavorite } = useLocalStore()
+	const isFavorite = useLocalStore(state => state.isFavorite)
+	const toggleFavoriteProduct = useLocalStore(state => state.toggleFavoriteProduct)
 
 	const isProductFavorite = useCallback(() => {
 		return isFavorite(id.toString())
