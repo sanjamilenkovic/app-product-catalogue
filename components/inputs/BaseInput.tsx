@@ -17,6 +17,8 @@ interface LabeledInputProps {
 	isEditable?: boolean;
 	style?: StyleProp<ViewStyle>;
 	onExternalTrailingIconPress?: () => void
+	autoCapitalize?: "none" | "sentences" | "words" | "characters" | undefined
+
 }
 
 function BaseInput ({
@@ -32,7 +34,8 @@ function BaseInput ({
 	isMandatory,
 	isEditable = true,
 	style,
-	onExternalTrailingIconPress
+	onExternalTrailingIconPress,
+	autoCapitalize
 }: LabeledInputProps) {
 
 	return (
@@ -48,6 +51,7 @@ function BaseInput ({
 					<TextInput
 						secureTextEntry={isSecure}
 						style={styles.input}
+						autoCapitalize={autoCapitalize}
 						editable={isEditable}
 						value={value}
 						multiline={isMultiline}

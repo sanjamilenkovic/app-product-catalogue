@@ -1,3 +1,4 @@
+import { RingingBellButton } from "@/components/buttons/animated/RingingBellButton";
 import { CardInvite } from "@/components/card/CardInvite";
 import BaseInput from "@/components/inputs/BaseInput";
 import ProductsSection from "@/components/products/productCard/ProductsSection";
@@ -10,7 +11,8 @@ import { fontSizes } from "@/utils/dimensions";
 import Icons from "@/utils/icons";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Share, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, ScrollView, Share, StyleSheet, View } from "react-native";
+import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -23,6 +25,7 @@ export default function OverviewScreen () {
 
 	const favorites = useLocalStore(state => state.favorites);
 	const toggleFavoriteProduct = useLocalStore(state => state.toggleFavoriteProduct);
+
 
 	const [searchInput, setSearchInput] = useState<string>('');
 
@@ -82,7 +85,7 @@ export default function OverviewScreen () {
 	return (
 		<ScrollView
 			style={[styles.container, { paddingTop: top }]}
-			contentContainerStyle={styles.contentContainer}
+			contentContainerStyle={[styles.contentContainer, Platform.OS === 'android' ? { paddingBottom: 60 } : {}]}
 			showsVerticalScrollIndicator={false}>
 
 			<View style={styles.topSectionContainer}>
@@ -93,7 +96,7 @@ export default function OverviewScreen () {
 					<BaseText style={styles.creditsText}>512 credits</BaseText>
 				</View>
 
-				<Icons.Notification />
+				<RingingBellButton />
 			</View>
 
 			<BaseInput
@@ -106,24 +109,31 @@ export default function OverviewScreen () {
 			<View style={styles.productsContainer}>
 
 				{isLoading ?
-					<ActivityIndicator /> :
-					<ProductsSection
-						data={filteredProducts}
-						headline="New products"
-						onProductPressed={onProductPressed}
-						onFavoriteButtonPressed={onFavoriteToggle}
-						onViewAllButtonPressed={onAllProductsPressed} />}
+					<Animated.View entering={FadeIn.duration(200)}>
+						<ActivityIndicator />
+					</Animated.View> :
+					<Animated.View entering={FadeInUp.duration(400)}>
+						<ProductsSection
+							data={filteredProducts}
+							headline="New products"
+							onProductPressed={onProductPressed}
+							onFavoriteButtonPressed={onFavoriteToggle}
+							onViewAllButtonPressed={onAllProductsPressed} />
+					</Animated.View>}
 
 				{favorites.length > 0 &&
-					<ProductsSection
-						data={filteredFavorites}
-						headline="Favorite products"
-						onProductPressed={onProductPressed}
-						onFavoriteButtonPressed={onFavoriteToggle}
-						onViewAllButtonPressed={onAllFavoritesPressed} />}
+					<Animated.View entering={FadeInUp.duration(400)} >
+						<ProductsSection
+							data={filteredFavorites}
+							headline="Favorite products"
+							onProductPressed={onProductPressed}
+							onFavoriteButtonPressed={onFavoriteToggle}
+							onViewAllButtonPressed={onAllFavoritesPressed} />
+					</Animated.View>}
 			</View>
 
 			<CardInvite onInviteButtonPressed={onInviteButtonPressed} />
+
 
 		</ScrollView>
 	);

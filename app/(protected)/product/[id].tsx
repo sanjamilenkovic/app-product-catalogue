@@ -1,4 +1,5 @@
 import { useGetSingleProductData } from "@/api/products/useGetSingleProductData";
+import { HeartButton } from "@/components/buttons/animated/HeartButton";
 import BaseButton from "@/components/buttons/BaseButton";
 import CardWrapper from "@/components/card/CardWrapper";
 import { BaseHeader } from "@/components/header/BaseHeader";
@@ -55,7 +56,7 @@ export default function ProductScreen () {
 					onTrailingIconPressed={() => {
 						toggleFavoriteProduct(mapApiProductToProduct(currentProduct))
 					}}
-					trailingIcon={isProductFavorite() ? <Icons.HeartFilled /> : <Icons.Heart />} />
+					trailingIcon={<HeartButton isFavorite={isProductFavorite()} />} />
 
 				<View style={styles.titleContainer}>
 					<BaseText variant="body1" style={styles.date}>{`Created at ${convertToFormattedDate(currentProduct.meta.createdAt)}`}</BaseText>

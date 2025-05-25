@@ -11,33 +11,52 @@ export type BaseHeaderProps = {
 	onBackPressed?: () => void;
 };
 
-export const BaseHeader = ({ headline, leadingIcon = <Icons.Arrow />, onBackPressed, onTrailingIconPressed, trailingIcon }: BaseHeaderProps) => {
+export const BaseHeader = ({
+	headline,
+	leadingIcon = <Icons.Arrow />,
+	onBackPressed,
+	onTrailingIconPressed,
+	trailingIcon,
+}: BaseHeaderProps) => {
 	return (
 		<View style={styles.headerContainer}>
+			<View style={styles.sideContainer}>
+				<Pressable onPress={onBackPressed}>
+					{leadingIcon}
+				</Pressable>
+			</View>
 
-			<Pressable onPress={onBackPressed}>
-				{leadingIcon}
-			</Pressable>
+			<View style={styles.centerContainer}>
+				{headline && <BaseText variant='body1'>{headline}</BaseText>}
+			</View>
 
-			{headline && <BaseText variant='body1'>{headline}</BaseText>}
-
-			<Pressable onPress={onTrailingIconPressed}>
-				{trailingIcon}
-			</Pressable>
-
+			<View style={styles.sideContainer}>
+				{trailingIcon ? (
+					<Pressable onPress={onTrailingIconPressed}>
+						{trailingIcon}
+					</Pressable>
+				) : null}
+			</View>
 		</View>
 	);
 };
-
 
 const styles = StyleSheet.create({
 	headerContainer: {
 		paddingVertical: 16,
 		flexDirection: 'row',
-		justifyContent: 'space-between',
 		alignItems: 'center',
+		justifyContent: 'space-between',
+		position: 'relative',
 	},
-	buttonContainer: {
-		padding: 8,
-	}
-})
+	sideContainer: {
+		width: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	centerContainer: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+});

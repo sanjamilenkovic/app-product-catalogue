@@ -1,7 +1,7 @@
+import { HeartButton } from "@/components/buttons/animated/HeartButton";
 import { Product } from "@/data/Product";
 import { backgroundColors, colors, textColors } from "@/theme/colors";
 import { fontSizes } from "@/utils/dimensions";
-import Icons from "@/utils/icons";
 import { Pressable, StyleSheet, View } from "react-native";
 import { BaseText } from "../../text/BaseText";
 import CardSingleInfo from "./CardSingleInfo";
@@ -22,7 +22,7 @@ function ProductCard ({ product, onProductPressed, onFavoriteButtonPressed }: Pr
 						<BaseText variant="body1" numberOfLines={1}>{product.title}</BaseText>
 					</View>
 					<Pressable onPress={onFavoriteButtonPressed}>
-						{product.isFavorite ? <Icons.HeartFilled /> : <Icons.Heart />}
+						<HeartButton isFavorite={product.isFavorite} />
 					</Pressable>
 				</View>
 

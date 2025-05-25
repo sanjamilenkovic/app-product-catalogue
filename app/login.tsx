@@ -12,7 +12,7 @@ import { getAuth, GoogleAuthProvider, signInWithCredential } from "@react-native
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -83,47 +83,52 @@ export default function LoginScreen () {
 
 	return (
 		<SafeAreaView style={styles.safeAreaContainer}>
+			<KeyboardAvoidingView
+				behavior={Platform.OS === "ios" ? "padding" : undefined}
+				style={styles.keyboardAvoidingContainer}
+			>
+				<View style={styles.container}>
 
-			<View style={styles.container}>
+					<BaseHeader onBackPressed={onBackPressed} />
 
-				<BaseHeader onBackPressed={onBackPressed} />
+					<View style={styles.titleContainer}>
+						<BaseText style={styles.title}>Login</BaseText>
+					</View>
 
-				<View style={styles.titleContainer}>
-					<BaseText style={styles.title}>Login</BaseText>
+
+					<View style={styles.inputsContainer}>
+
+						<BaseInput
+							label="Email"
+							value={email}
+							onChangeValue={setEmail}
+							autoCapitalize="none"
+							placeholder="john@email.com"
+							icon={<Icons.Email />} />
+
+						<SecureInput
+							label="Password"
+							placeholder="********"
+							value={password}
+							onChangeValue={setPassword}
+							icon={<Icons.Lock />} />
+
+						<BaseButton
+							label="Login"
+							isLoading={isPending}
+							onPress={onLoginPressed} />
+
+						<BaseButton
+							label="Continue with Google"
+							white
+							onPress={onGoogleLoginPressed}
+							icon={<Icons.Google />}
+						/>
+					</View>
+
 				</View>
 
-
-				<View style={styles.inputsContainer}>
-
-					<BaseInput
-						label="Email"
-						value={email}
-						onChangeValue={setEmail}
-						placeholder="john@email.com"
-						icon={<Icons.Email />} />
-
-					<SecureInput
-						label="Password"
-						placeholder="********"
-						value={password}
-						onChangeValue={setPassword}
-						icon={<Icons.Lock />} />
-
-					<BaseButton
-						label="Login"
-						isLoading={isPending}
-						onPress={onLoginPressed} />
-
-					<BaseButton
-						label="Continue with Google"
-						white
-						onPress={onGoogleLoginPressed}
-						icon={<Icons.Google />}
-					/>
-				</View>
-
-			</View>
-
+			</KeyboardAvoidingView>
 		</SafeAreaView >
 	);
 }
@@ -132,6 +137,9 @@ const styles = StyleSheet.create({
 	safeAreaContainer: {
 		flex: 1,
 		backgroundColor: backgroundColors.primary
+	},
+	keyboardAvoidingContainer: {
+		flex: 1
 	},
 	container: {
 		flex: 1,

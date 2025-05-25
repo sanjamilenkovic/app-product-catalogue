@@ -7,7 +7,8 @@ import { backgroundColors, textColors } from "@/theme/colors";
 import Icons from "@/utils/icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditProductScreen () {
@@ -54,86 +55,92 @@ export default function EditProductScreen () {
 
 	return (
 		<SafeAreaView style={styles.container}>
-
-			<ScrollView showsVerticalScrollIndicator={false}>
-				<BaseHeader
-					headline="Edit product"
-					onBackPressed={onBackButtonPressed}
-				/>
-
-				<View style={styles.titleContainer}>
-					<BaseText variant="heading2">
-						Edit product
-					</BaseText>
-				</View>
-
-				<View style={styles.inputsContainer}>
-					<BaseInput
-						label="Title"
-						placeholder="Product title"
-						value={title}
-						onChangeValue={(text) => setTitle(text)}
-						isMandatory
+			<KeyboardAvoidingView
+				behavior={Platform.OS === "ios" ? "padding" : undefined}
+				style={styles.keyboardAvoidingContainer}
+			>
+				<ScrollView showsVerticalScrollIndicator={false} >
+					<BaseHeader
+						headline="Edit product"
+						onBackPressed={onBackButtonPressed}
 					/>
 
-					<BaseInput
-						label="Product description"
-						placeholder="Product description"
-						isMultiline={true}
-						value={description}
-						onChangeValue={setDescription}
-					/>
-
-					<View style={styles.disabledInput}>
-						<BaseText variant="body1" style={styles.disabledInputTitle}>💡 ID of product</BaseText>
-						<BaseText>{id}</BaseText>
-					</View>
-				</View>
-
-				<View style={styles.tagsContainer}>
 					<View style={styles.titleContainer}>
-						<BaseText variant="heading2">Tags</BaseText>
+						<BaseText variant="heading2">
+							Edit product
+						</BaseText>
 					</View>
 
-					{tags.map((item, index) => {
-						return (
-							<BaseInput
-								key={index}
-								label="Tag name"
-								value={item}
-								onChangeValue={(text) => updateTag(index, text)}
-								placeholder="Enter tag name"
-								isMandatory
-								onExternalTrailingIconPress={() => onRemoveTagButtonPressed(index)}
-								externalTrailingIcon={binIcon} />
-						)
-					})}
 
-					<BaseButton
-						label="Add tag +"
-						white
-						onPress={onAddTagButtonPressed} />
-				</View>
+					<View style={styles.inputsContainer}>
+						<BaseInput
+							label="Title"
+							placeholder="Product title"
+							value={title}
+							onChangeValue={(text) => setTitle(text)}
+							isMandatory
+						/>
 
-				<View style={styles.buttonsContainer}>
+						<BaseInput
+							label="Product description"
+							placeholder="Product description"
+							isMultiline={true}
+							value={description}
+							onChangeValue={setDescription}
+						/>
 
-					<BaseButton
-						label="Back"
-						style={styles.footerButton}
-						white
-						onPress={onBackButtonPressed} />
+						<View style={styles.disabledInput}>
+							<BaseText variant="body1" style={styles.disabledInputTitle}>💡 ID of product</BaseText>
+							<BaseText>{id}</BaseText>
+						</View>
+					</View>
 
-					<BaseButton
-						label="Edit"
-						style={styles.footerButton}
-						onPress={
-							onEditButtonPressed
-						} />
-				</View>
 
-			</ScrollView>
+					<View style={styles.tagsContainer}>
+						<View style={styles.titleContainer}>
+							<BaseText variant="heading2">Tags</BaseText>
+						</View>
 
-		</SafeAreaView>
+						{tags.map((item, index) => {
+							return (
+								<Animated.View key={index} entering={FadeInUp.duration(400)}>
+									<BaseInput
+										label="Tag name"
+										value={item}
+										onChangeValue={(text) => updateTag(index, text)}
+										placeholder="Enter tag name"
+										isMandatory
+										onExternalTrailingIconPress={() => onRemoveTagButtonPressed(index)}
+										externalTrailingIcon={binIcon} />
+								</Animated.View>
+							)
+						})}
+
+						<BaseButton
+							label="Add tag +"
+							white
+							onPress={onAddTagButtonPressed} />
+					</View>
+
+					<View style={styles.buttonsContainer}>
+
+						<BaseButton
+							label="Back"
+							style={styles.footerButton}
+							white
+							onPress={onBackButtonPressed} />
+
+						<BaseButton
+							label="Edit"
+							style={styles.footerButton}
+							onPress={
+								onEditButtonPressed
+							} />
+					</View>
+
+				</ScrollView>
+			</KeyboardAvoidingView>
+		</SafeAreaView >
 
 	);
 }
@@ -144,6 +151,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: backgroundColors.primary,
 		paddingHorizontal: 16,
+	},
+	keyboardAvoidingContainer: {
+		flex: 1
 	},
 	headerContainer: {
 		paddingVertical: 24,
